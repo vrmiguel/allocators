@@ -1,6 +1,4 @@
-use core::ptr::NonNull;
-
-use libc::{MAP_ANON, MAP_PRIVATE, PROT_READ, PROT_WRITE, c_void, mmap, munmap};
+use libc::{c_void, mmap, munmap, MAP_ANON, MAP_PRIVATE, PROT_READ, PROT_WRITE};
 
 /// Request a contiguous and anonymous memory block from the kernel
 pub fn allocate_bytes(bytes: usize) -> *mut c_void {
@@ -22,14 +20,10 @@ pub fn allocate_bytes(bytes: usize) -> *mut c_void {
     }
 }
 
-/// Unmaps a memory block previously returned by [`mmap`].
-/// 
-/// Returns true if the 
+/// Unmaps a memory block previously returned by [`mmap`] starting
+/// at `pos` until `pos + bytes - 1`.
+///
+/// Returns true if the operation succeeds
 pub fn deallocate_bytes(pos: usize, bytes: usize) -> bool {
-    0 == unsafe {
-        munmap(
-            pos as *mut _,
-            bytes
-        )
-    }
+    0 == unsafe { munmap(pos as *mut _, bytes) }
 }

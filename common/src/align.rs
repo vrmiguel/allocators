@@ -1,22 +1,14 @@
-/// Check if the given number is a power of two.
-pub fn is_power_of_two(x: usize) -> bool {
-    (x != 0) && (x & (x - 1)) == 0
-}
-
 /// Align the given address `addr` upwards to alignment `align`.
 ///
-/// Requires that `align` is a power of two.
+/// Panics if `align` is not a power of two.
 pub fn align_to(addr: usize, align: usize) -> usize {
-    debug_assert!(is_power_of_two(align));
-
-    (addr + align - 1) & !(align - 1)
+    let offset = (addr as *const u8).align_offset(align);
+    addr + offset
 }
 
 #[cfg(test)]
 mod tests {
-    use core::ops::Not;
-
-    use crate::align::{align_to, is_power_of_two};
+    use crate::align::align_to;
 
     #[test]
     fn test_align_to() {
@@ -27,19 +19,5 @@ mod tests {
         assert_eq!(align_to(16, 8), 16);
         assert_eq!(align_to(255, 64), 256);
         assert_eq!(align_to(257, 64), 320);
-    }
-
-    #[test]
-    fn test_is_power_of_two() {
-        assert!(is_power_of_two(2));
-        assert!(is_power_of_two(4));
-        assert!(is_power_of_two(16));
-        assert!(is_power_of_two(128));
-
-        assert!(is_power_of_two(0).not());
-        assert!(is_power_of_two(3).not());
-        assert!(is_power_of_two(8 + 16).not());
-        assert!(is_power_of_two(8 + 32).not());
-        assert!(is_power_of_two(16 + 64).not());
     }
 }

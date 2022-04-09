@@ -1,8 +1,11 @@
-use libc::{c_void, mmap, munmap, MAP_ANON, MAP_PRIVATE, PROT_READ, PROT_WRITE};
+use core::ptr;
+use libc::{c_void, mmap, munmap, MAP_ANON, MAP_FAILED, MAP_PRIVATE, PROT_READ, PROT_WRITE};
 
-/// Request a contiguous and anonymous memory block from the kernel
+/// Request a contiguous and anonymous memory block from the kernel.
+/// 
+/// Returns a null pointer if the operation failed
 pub fn allocate_bytes(bytes: usize) -> *mut c_void {
-    unsafe {
+    let ptr = unsafe {
         mmap(
             // Let kernel decide where to place it in virtual address space
             core::ptr::null_mut(),
@@ -17,6 +20,11 @@ pub fn allocate_bytes(bytes: usize) -> *mut c_void {
             -1,
             0,
         )
+    };
+
+    match ptr {
+        MAP_FAILED => ptr::null_mut(),
+        valid_ptr => valid_ptr,
     }
 }
 

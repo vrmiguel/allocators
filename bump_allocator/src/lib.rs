@@ -88,7 +88,7 @@ impl BumpAllocator {
         Ok(unsafe { Self::new(start, start + cap) })
     }
 
-    /// Creates a [`BumpAllocator`] allocating the amount of bytes
+    /// Creates a [`BumpAllocator`] with the given heap region
     ///
     /// # Safety
     ///

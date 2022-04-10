@@ -1,9 +1,9 @@
 use core::ptr;
-use libc::{c_void, mmap, munmap, MAP_ANON, MAP_FAILED, MAP_PRIVATE, PROT_READ, PROT_WRITE};
+use libc::{c_void, mmap, munmap, MAP_ANON, MAP_PRIVATE, PROT_READ, PROT_WRITE};
 
 /// Request a contiguous and anonymous memory block from the kernel.
-/// 
-/// Returns a null pointer if the operation failed
+///
+/// Returns a null pointer if the operation failed.
 pub fn allocate_bytes(bytes: usize) -> *mut c_void {
     let ptr = unsafe {
         mmap(
@@ -23,7 +23,7 @@ pub fn allocate_bytes(bytes: usize) -> *mut c_void {
     };
 
     match ptr {
-        MAP_FAILED => ptr::null_mut(),
+        libc::MAP_FAILED => ptr::null_mut(),
         valid_ptr => valid_ptr,
     }
 }
@@ -31,7 +31,7 @@ pub fn allocate_bytes(bytes: usize) -> *mut c_void {
 /// Unmaps a memory block previously returned by [`mmap`] starting
 /// at `pos` until `pos + bytes - 1`.
 ///
-/// Returns true if the operation succeeds
+/// Returns true if the operation succeeds.
 pub fn deallocate_bytes(pos: usize, bytes: usize) -> bool {
     0 == unsafe { munmap(pos as *mut _, bytes) }
 }
